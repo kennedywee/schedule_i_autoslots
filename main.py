@@ -21,13 +21,15 @@ MOVES = [650, 1050, 1100, 950]  # slot-to-slot distances
 SLOT_DELAY = 0.2           # pause after hitting a slot
 RESET_DELAY = 2.0          # wait for slots to reset each round
 WALK_HOLD = 0.75           # how long to hold 's' at the start
+HOTKEY_START = 59          # F1 (kernel keycodes, see /usr/include/linux/input-event-codes.h)
+HOTKEY_STOP = 62           # F4
+HOTKEY_QUIT = 63           # F5
 
 # --- kernel input constants ---------------------------------------------
 EV_SYN, EV_KEY, EV_REL = 0, 1, 2
 REL_X, REL_Y = 0, 1
 BTN_LEFT = 0x110  # unused, but libinput only accepts pointers that look like a real mouse
 KEY_LEFTCTRL, KEY_S, KEY_E = 29, 31, 18
-KEY_F1, KEY_F4, KEY_F5 = 59, 62, 63
 EVENT_FMT = "qqHHi"  # struct input_event on 64-bit
 EVENT_SIZE = struct.calcsize(EVENT_FMT)
 
@@ -102,13 +104,13 @@ def main():
                     _, _, etype, code, value = struct.unpack_from(EVENT_FMT, data, off)
                     if etype != EV_KEY or value != 1:
                         continue
-                    if code == KEY_F1 and (worker is None or not worker.is_alive()):
+                    if code == HOTKEY_START and (worker is None or not worker.is_alive()):
                         stop.clear()
                         worker = threading.Thread(target=macro, args=(uinput, stop), daemon=True)
                         worker.start()
-                    elif code == KEY_F4:
+                    elif code == HOTKEY_STOP:
                         stop.set()
-                    elif code == KEY_F5:
+                    elif code == HOTKEY_QUIT:
                         print("bye", flush=True)
                         return
     finally:

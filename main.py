@@ -5,7 +5,7 @@ Self-contained: injects input via /dev/uinput (looks like real hardware,
 works in any game, X11 or Wayland) and reads hotkeys straight from
 /dev/input (needs 'input' group membership, which you have).
 
-Run:  python3 slots.py
+Run:  python3 main.py
 """
 import glob
 import os
@@ -15,7 +15,7 @@ import threading
 import time
 from fcntl import ioctl
 
-# --- knobs: trial and error, same as the original AHK script -----------
+# --- knobs: trial and error -------------------------------------------
 INIT_MOVE = -1900          # initial move to the first slot
 MOVES = [650, 1050, 1100, 950]  # slot-to-slot distances
 SLOT_DELAY = 0.2           # pause after hitting a slot
